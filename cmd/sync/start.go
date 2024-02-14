@@ -28,7 +28,7 @@ var StartCmd = &cobra.Command{
 }
 
 func init() {
-	StartCmd.Flags().Bool("force", false, "Force syncing of paused repositories")
+	StartCmd.Flags().BoolP("force", "f", false, "Force syncing of paused repositories")
 	viper.BindPFlag("force", StartCmd.Flags().Lookup("force"))
 }
 
