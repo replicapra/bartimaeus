@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/replicapra/bartimaeus/cmd/sync"
 	"github.com/spf13/cobra"
 )
@@ -17,11 +15,12 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("sync called")
-	},
 }
 
 func init() {
 	SyncCmd.AddCommand(sync.StartCmd)
+	SyncCmd.AddCommand(sync.AddCmd)
+	SyncCmd.AddCommand(sync.PauseCmd)
+	SyncCmd.AddCommand(sync.RemoveCmd)
+	SyncCmd.AddCommand(sync.UnpauseCmd)
 }
