@@ -29,7 +29,7 @@ to quickly create a Cobra application.`,
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		for _, relPath := range args {
-			addRelPathToBookSpace(relPath)
+			AddAbsPathToBookSpace(util.GetAbsPath(relPath))
 		}
 	},
 }
@@ -39,11 +39,7 @@ func init() {
 	viper.BindPFlag("rename", BookCmd.Flags().Lookup("rename"))
 }
 
-func addRelPathToBookSpace(relPath string) {
-
-	absPath, err := filepath.Abs(relPath)
-	util.CheckErr(err)
-
+func AddAbsPathToBookSpace(absPath string) {
 	if _, err := os.Stat(absPath); err != nil {
 		util.CheckErr(err)
 	}

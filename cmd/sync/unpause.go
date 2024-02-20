@@ -1,11 +1,6 @@
-/*
-Copyright © 2024 replicapra
-*/
 package sync
 
 import (
-	"path/filepath"
-
 	"github.com/charmbracelet/log"
 	"github.com/replicapra/bartimaeus/internal/config"
 	"github.com/replicapra/bartimaeus/util"
@@ -27,16 +22,13 @@ to quickly create a Cobra application.`,
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		for _, relPath := range args {
-			unpauseRelPath(relPath)
+			UnpauseAbsPath(util.GetAbsPath(relPath))
 		}
 
 	},
 }
 
-func unpauseRelPath(relPath string) {
-	absPath, err := filepath.Abs(relPath)
-	util.CheckErr(err)
-
+func UnpauseAbsPath(absPath string) {
 	repositories := viper.Get("repositories").([]config.Repository)
 
 	if !slices.ContainsFunc[[]config.Repository](repositories, func(repo config.Repository) bool { return repo.Path == absPath }) {
