@@ -59,7 +59,6 @@ func addRelPathToBookSpace(relPath string) {
 
 		if m, ok := m.(model); ok {
 			fileName = m.textInput.Value()
-			log.Info(fileName)
 		}
 	}
 
@@ -89,7 +88,7 @@ func addRelPathToBookSpace(relPath string) {
 	_, err = io.Copy(destination, source)
 	util.CheckErr(err)
 
-	log.Infof("Book %s added", newBookPath)
+	log.Infof("Book %s added", fileName)
 
 }
 
@@ -103,7 +102,7 @@ func initialModel(name string) model {
 	ti.SetValue(name)
 	ti.Focus()
 	ti.CharLimit = 255
-	ti.Width = 20
+	ti.Width = 80
 
 	return model{
 		textInput: ti,
