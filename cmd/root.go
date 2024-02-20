@@ -34,4 +34,5 @@ func init() {
 	})
 
 	RootCmd.AddCommand(SyncCmd)
+	RootCmd.AddCommand(ObsidianCmd)
 }
