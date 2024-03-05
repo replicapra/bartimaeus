@@ -27,4 +27,5 @@ to quickly create a Cobra application.`,
 
 func init() {
 	ObsidianCmd.AddCommand(obsidian.AddCmd)
+	ObsidianCmd.AddCommand(obsidian.OpenCmd)
 }
