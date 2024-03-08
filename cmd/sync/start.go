@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/replicapra/bartimaeus/internal/command"
-	"github.com/replicapra/bartimaeus/internal/config"
+	"github.com/replicapra/bartimaeus/internal/database"
 )
 
 // syncCmd represents the sync command
@@ -20,7 +20,8 @@ var StartCmd = &cobra.Command{
 	Short: "Starts syncing your repositories to github.",
 	Long:  "Iterates over all repositories defined in your config file and syncs them to github.",
 	Run: func(cmd *cobra.Command, args []string) {
-		repositories := viper.Get("repositories").([]config.Repository)
+		var repositories []database.Repository
+		database.Client.Find(&repositories)
 		for _, repo := range repositories {
 			syncRepo(repo)
 		}
@@ -32,7 +33,7 @@ func init() {
 	viper.BindPFlag("force", StartCmd.Flags().Lookup("force"))
 }
 
-func syncRepo(repo config.Repository) {
+func syncRepo(repo database.Repository) {
 
 	if err := os.Chdir(repo.Path); err != nil {
 		log.Errorf("%s doesn't exist", repo.Path)

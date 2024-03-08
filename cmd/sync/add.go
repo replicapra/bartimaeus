@@ -5,24 +5,19 @@ import (
 	"path"
 
 	"github.com/charmbracelet/log"
-	"github.com/replicapra/bartimaeus/internal/config"
+	"github.com/replicapra/bartimaeus/internal/database"
 	"github.com/replicapra/bartimaeus/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"golang.org/x/exp/slices"
+	"gorm.io/gorm/clause"
 )
 
 // addCmd represents the add command
 var AddCmd = &cobra.Command{
 	Use:   "add",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Args: cobra.MinimumNArgs(1),
+	Short: "Adds the given repositories to the list of repositories to sync.",
+	Long:  `usage: bartimaeus sync add <relative paths>`,
+	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		for _, relPath := range args {
 			AddAbsPath(util.GetAbsPath(relPath))
@@ -36,26 +31,18 @@ func init() {
 }
 
 func AddAbsPath(absPath string) {
-	repositories := viper.Get("repositories").([]config.Repository)
-
-	if slices.ContainsFunc[[]config.Repository](repositories, func(repo config.Repository) bool { return repo.Path == absPath }) {
-		log.Errorf("Repository %s already in list", absPath)
-		return
-	}
-
 	if _, err := os.Stat(path.Join(absPath, ".git")); os.IsNotExist(err) {
 		log.Errorf("%s is not root of a git directory", absPath)
 		return
 	}
 
-	repositories = append(repositories, config.Repository{
+	database.Client.Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "path"}},
+		DoUpdates: clause.AssignmentColumns([]string{"paused"}),
+	}).Create(&database.Repository{
 		Path:   absPath,
 		Paused: viper.GetBool("paused"),
 	})
-
-	viper.Set("repositories", repositories)
-
-	config.Save()
 
 	log.Infof("Repository %s added", absPath)
 }

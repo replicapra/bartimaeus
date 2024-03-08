@@ -9,14 +9,8 @@ import (
 )
 
 type Config struct {
-	Hostname     string       `mapstructure:"hostname"`
-	Database     Database     `mapstructure:"database"`
-	Repositories []Repository `mapstructure:"repositories"`
-}
-
-type Repository struct {
-	Path   string `mapstructure:"path"`
-	Paused bool   `mapstructure:"paused"`
+	Hostname string   `mapstructure:"hostname"`
+	Database Database `mapstructure:"database"`
 }
 
 type Database struct {
@@ -50,11 +44,6 @@ func Load() {
 	// If a config file is found, read it in.
 	err := viper.ReadInConfig()
 	util.CheckErr(err)
-
-	var repositories []Repository
-	viper.UnmarshalKey("repositories", &repositories)
-	viper.Set("repositories", repositories)
-
 }
 
 func Save() {
