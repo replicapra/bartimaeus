@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/replicapra/bartimaeus/internal/config"
+	"github.com/replicapra/bartimaeus/internal/database"
 	"github.com/replicapra/bartimaeus/util"
 	"github.com/spf13/cobra"
 )
@@ -31,6 +32,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(func() {
 		config.Init()
+		database.Init()
 	})
 
 	RootCmd.AddCommand(SyncCmd)

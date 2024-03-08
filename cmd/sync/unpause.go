@@ -2,11 +2,10 @@ package sync
 
 import (
 	"github.com/charmbracelet/log"
-	"github.com/replicapra/bartimaeus/internal/config"
+	"github.com/replicapra/bartimaeus/internal/database"
 	"github.com/replicapra/bartimaeus/util"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"golang.org/x/exp/slices"
+	"gorm.io/gorm"
 )
 
 // unpauseCmd represents the unpause command
@@ -24,24 +23,20 @@ to quickly create a Cobra application.`,
 		for _, relPath := range args {
 			UnpauseAbsPath(util.GetAbsPath(relPath))
 		}
-
 	},
 }
 
 func UnpauseAbsPath(absPath string) {
-	repositories := viper.Get("repositories").([]config.Repository)
-
-	if !slices.ContainsFunc[[]config.Repository](repositories, func(repo config.Repository) bool { return repo.Path == absPath }) {
+	repository, error := database.GetRepositoryByAbsPath(absPath)
+	if error == gorm.ErrRecordNotFound {
 		log.Errorf("Repository %s not in list", absPath)
 		return
 	}
+	util.CheckErr(error)
 
-	index := slices.IndexFunc[[]config.Repository](repositories, func(repo config.Repository) bool { return repo.Path == absPath })
-	repositories[index].Paused = false
+	repository.Paused = false
 
-	viper.Set("repositories", repositories)
-
-	config.Save()
+	database.Client.Save(&repository)
 
 	log.Infof("Repository %s unpaused", absPath)
 }

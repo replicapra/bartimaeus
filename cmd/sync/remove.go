@@ -2,11 +2,9 @@ package sync
 
 import (
 	"github.com/charmbracelet/log"
-	"github.com/replicapra/bartimaeus/internal/config"
+	"github.com/replicapra/bartimaeus/internal/database"
 	"github.com/replicapra/bartimaeus/util"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"golang.org/x/exp/slices"
 )
 
 // removeCmd represents the remove command
@@ -28,19 +26,7 @@ to quickly create a Cobra application.`,
 }
 
 func RemoveAbsPath(absPath string) {
-	repositories := viper.Get("repositories").([]config.Repository)
-
-	if !slices.ContainsFunc[[]config.Repository](repositories, func(repo config.Repository) bool { return repo.Path == absPath }) {
-		log.Errorf("Repository %s not in list", absPath)
-		return
-	}
-
-	index := slices.IndexFunc[[]config.Repository](repositories, func(repo config.Repository) bool { return repo.Path == absPath })
-	repositories = append(repositories[:index], repositories[index+1:]...)
-
-	viper.Set("repositories", repositories)
-
-	config.Save()
+	database.Client.Delete(&database.Repository{}, "path = ?", absPath)
 
 	log.Infof("Repository %s removed", absPath)
 }
