@@ -10,12 +10,17 @@ import (
 
 type Config struct {
 	Hostname     string       `mapstructure:"hostname"`
+	Database     Database     `mapstructure:"database"`
 	Repositories []Repository `mapstructure:"repositories"`
 }
 
 type Repository struct {
 	Path   string `mapstructure:"path"`
 	Paused bool   `mapstructure:"paused"`
+}
+
+type Database struct {
+	Path string `mapstructure:"path"`
 }
 
 // Init reads in config file and ENV variables if set.
