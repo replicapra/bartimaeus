@@ -1,11 +1,13 @@
 package database
 
-import "gorm.io/gorm"
+import "time"
 
 type Repository struct {
-	gorm.Model
-	Path   string `gorm:"uniqueIndex"`
-	Paused bool
+	ID        uint `gorm:"primaryKey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	Path      string `gorm:"uniqueIndex"`
+	Paused    bool
 }
 
 func GetRepositoryByAbsPath(path string) (Repository, error) {

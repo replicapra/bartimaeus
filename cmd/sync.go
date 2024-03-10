@@ -23,4 +23,5 @@ func init() {
 	SyncCmd.AddCommand(sync.PauseCmd)
 	SyncCmd.AddCommand(sync.RemoveCmd)
 	SyncCmd.AddCommand(sync.UnpauseCmd)
+	SyncCmd.AddCommand(sync.ListCmd)
 }
